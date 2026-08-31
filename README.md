@@ -1,5 +1,3 @@
-# High-Power-Rocket-and-Flight-Computer
-High-power rocket built with custom avionics, 3D-printed aerostructures, parachute recovery, key-locked ignition.
 # Team-Developed Rocket and Flight Computer
 
 A custom rocket and embedded flight-computer system developed by **Adriano Zagar and team**. The project combines avionics, sensor integration, aerodynamic simulation, mechanical design, fabrication, recovery, and system-level testing.
