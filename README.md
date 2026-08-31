@@ -1,183 +1,163 @@
-# Model Rocket Flight Computer & Airframe
+# Model Rocket & ESP32 Flight Computer
 
-A custom model rocket and embedded flight-computer project integrating ESP32-based data acquisition, environmental sensing, onboard data logging, flight analysis, and custom-designed mechanical components.
+A model rocket built from scratch around a custom ESP32-S3 flight computer that logs
+barometric altitude, pressure, and temperature to onboard flash at 20 Hz.
 
-The project combines embedded C++ programming, electronics, sensor integration, CAD design, 3D printing, and experimental flight-data analysis into a complete rocket development platform.
+The project covers the full build: airframe design in OpenRocket, custom fins, nose cone,
+and launch-rail hardware modeled in SOLIDWORKS and 3D printed, firmware written in
+Arduino/C++, a homemade igniter and safety-interlock launch controller, and flight testing.
 
----
-
-## Project Overview
-
-The goal of this project was to design and build a model rocket system capable of collecting and recording real flight data using a custom embedded flight computer.
-
-The system uses an ESP32-based flight computer to interface with onboard sensors and record flight information for post-flight analysis. Custom mechanical components were designed for the rocket in SOLIDWORKS and exported as STL files for fabrication.
-
-The project demonstrates the complete engineering process from design and programming through fabrication, testing, and data analysis.
+<img src="media/launch.gif" width="320" alt="Rocket launching from the field">
 
 ---
 
-## Repository Files
+## Flight Computer
 
-### Flight Computer Firmware
+<img src="media/flight-computer.png" width="520" alt="ESP32-S3 flight computer on perfboard">
 
-**[Flight_Computer_Program.ino](Flight_Computer_Program.ino)**
+| Part | Role |
+| --- | --- |
+| ESP32-S3 WROOM (Freenove) | Main controller, onboard LittleFS flash storage |
+| BME280 (I²C, `0x76`) | Barometric pressure, temperature, derived altitude |
+| TPS61023 boost converter | Steps battery voltage up to the board's power rail |
+| Perfboard + soldered harness | Flight-ready wiring, no breadboard jumpers |
 
-Arduino/ESP32 firmware used by the onboard flight computer for sensor interfacing, data acquisition, and flight-data logging.
+Wiring is I²C on `SDA = GPIO21`, `SCL = GPIO22`.
 
----
+### Firmware
 
-### Flight Data
+[`firmware/Flight_Computer_Program/Flight_Computer_Program.ino`](firmware/Flight_Computer_Program/Flight_Computer_Program.ino)
 
-**[flight_log.xlsx](flight_log.xlsx)**
+On boot the firmware averages 10 pressure samples to establish a ground baseline, opens the
+next unused `flight_N.csv` on LittleFS, and logs continuously:
 
-Recorded flight data used for post-flight analysis.
+- **20 Hz sampling** (50 ms interval), pressure oversampled ×16 for resolution
+- **Altitude** derived from the barometric formula against the ground baseline
+- **Flushed to flash every second**, so an unexpected power loss costs at most 1 s of data
+- **Auto-incrementing flight files** — a new log per power cycle, nothing overwritten
 
-**[RocketData.png](RocketData.png)**
+Logged columns: `time_ms, pressure_hPa, temperature_C, altitude_m`
 
-Visualization of the collected rocket flight data.
+### Serial commands
 
-![Rocket Flight Data](RocketData.png)
+Connect at **115200 baud** and send a single character:
+
+| Key | Action |
+| --- | --- |
+| `L` | List stored flight logs and flash usage |
+| `D` | Dump all logs over serial for retrieval |
+| `W` | Erase all logs |
+| `S` | Pause / resume logging |
+
+### Building
+
+Requires the ESP32 board support package plus the `Adafruit_BME280` and `Adafruit_Sensor`
+libraries. Open the sketch folder in the Arduino IDE, select an ESP32-S3 board, and upload.
 
 ---
 
 ## Mechanical Design
 
-Custom rocket components were designed in SOLIDWORKS and exported as STL files for fabrication and 3D printing.
+Custom components were modeled in SOLIDWORKS and 3D printed. Sources are in
+[`cad/solidworks/`](cad/solidworks/), print-ready meshes in [`cad/stl/`](cad/stl/).
 
-### Rocket Clamp
+| Component | SOLIDWORKS | STL |
+| --- | --- | --- |
+| Fin can | [RocketFins.SLDPRT](cad/solidworks/RocketFins.SLDPRT) | [RocketFins.STL](cad/stl/RocketFins.STL) |
+| Nose cone | [NoseCone.SLDPRT](cad/solidworks/NoseCone.SLDPRT) | [NoseCone.STL](cad/stl/NoseCone.STL) |
+| Launch-rail clamp | [RocketClamp.SLDPRT](cad/solidworks/RocketClamp.SLDPRT) | [RocketClamp.STL](cad/stl/RocketClamp.STL) |
 
-- **[RocketClamp.SLDPRT](RocketClamp.SLDPRT)** — Original SOLIDWORKS part
-- **[RocketClamp.STL](RocketClamp.STL)** — 3D-printable version
+<img src="media/fin-motor-mount.png" width="300" alt="Printed fin can and motor mount">
+<img src="media/final-assembled-rocket.png" width="240" alt="Completed rocket">
 
-### Rocket Fins
+Recovery is a parachute deployed by the motor's ejection charge.
 
-- **[RocketFins.SLDPRT](RocketFins.SLDPRT)** — Original SOLIDWORKS part
-- **[RocketFins.STL](RocketFins.STL)** — 3D-printable version
+<img src="media/recovery-parachute.png" width="300" alt="Recovery parachute">
 
-### Nose Cone
-
-- **[cone.SLDPRT](cone.SLDPRT)** — Original SOLIDWORKS part
-- **[cone.STL](cone.STL)** — 3D-printable version
-
----
-
-## OpenRocket Simulation
-
-**[RocketProject.ork](RocketProject.ork)**
-
-OpenRocket project file containing the rocket configuration used for design and flight simulation.
 
 ---
 
-## Project Documentation
+## Simulation
 
-### Engineering Project Report
+[`simulation/RocketProject.ork`](simulation/RocketProject.ork) — OpenRocket model used to size
+the airframe and predict the flight profile.
 
-**[View Project PDF](rocket_project.pdf)**
+![OpenRocket vertical motion vs. time](simulation/openrocket-vertical-motion.png)
 
-Additional project documentation is available here:
-
-**[View Additional Project PDF](rocket_project_2.pdf)**
-
----
-
-## Project Images
-
-The repository also contains a collection of project images:
-
-**[Download Project Images](rocket-project-images.zip)**
-
-These images document the rocket, flight computer, CAD designs, development process, and testing.
+| Predicted | Value |
+| --- | --- |
+| Apogee | 390 ft |
+| Time to apogee | 3.2 s |
+| Total flight time | 19.3 s |
+| Peak velocity | 327 ft/s |
+| Peak acceleration | 317 ft/s² |
 
 ---
 
-## Engineering Workflow
+## Flight Data
 
-### 1. Rocket Design
+[`data/flight_log.xlsx`](data/flight_log.xlsx) — a 200-row flight profile with per-phase
+labels (ignition, powered ascent, coast, apogee, descent, landed), matching the CSV schema
+the flight computer writes.
 
-The rocket geometry and major components were developed and evaluated before fabrication.
+> **Note:** this workbook is **synthetic data generated from the OpenRocket simulation above**,
+> not telemetry recovered from a launch — it is labeled as such in the file itself
+> (`Data_Source = SYNTHETIC_SIMULATION`). It exists to demonstrate the logging format and
+> analysis pipeline. Recorded flight logs are not currently in this repository.
 
-### 2. Mechanical CAD
+---
 
-Custom components including the rocket fins, nose cone, and mounting hardware were modeled in SOLIDWORKS.
+## Launch System
 
-### 3. Flight Computer Development
+<img src="media/custom-igniter.png" width="300" alt="Hand-built nichrome igniter">
+<img src="media/safety-lock.png" width="300" alt="Launch controller with safety interlock">
 
-An embedded flight computer was programmed to interface with onboard sensors and record flight information.
+A hand-built nichrome igniter fired from a 9 V controller with a **two-stage safety
+interlock** — an arming switch in series with a momentary launch button, so the igniter
+cannot be energized by a single accidental press.
 
-### 4. Fabrication & Assembly
+<img src="media/launch-setup.png" width="360" alt="Rocket on the pad before launch">
 
-Mechanical components were exported to STL format for fabrication and integrated with the rocket and flight-computer hardware.
+---
 
-### 5. Flight Testing
+## Documentation
 
-The completed system was tested through an actual rocket flight while the onboard electronics collected flight data.
-
-### 6. Data Analysis
-
-Recorded flight data was exported and analyzed after recovery to evaluate the rocket's flight behavior and the performance of the flight-computer system.
+- [Project report](docs/rocket-flight-computer-report.pdf) — written write-up of the design and build
+- [Photo report](docs/rocket-flight-computer-photo-report.pdf) — illustrated build documentation
 
 ---
 
 ## Repository Structure
 
 ```text
-Model-Rocket-Project/
-│
-├── Flight_Computer_Program.ino
-│
-├── RocketClamp.SLDPRT
-├── RocketClamp.STL
-│
-├── RocketFins.SLDPRT
-├── RocketFins.STL
-│
-├── cone.SLDPRT
-├── cone.STL
-│
-├── RocketProject.ork
-│
-├── flight_log.xlsx
-├── RocketData.png
-│
-├── rocket-project-images.zip
-│
-├── rocket_project.pdf
-├── rocket_project_2.pdf
-│
-└── README.md
+.
+├── firmware/
+│   └── Flight_Computer_Program/     Arduino sketch (ESP32-S3 + BME280 logger)
+├── cad/
+│   ├── solidworks/                  Editable SOLIDWORKS parts
+│   └── stl/                         Print-ready meshes
+├── simulation/                      OpenRocket model + predicted flight profile
+├── data/                            Flight-log workbook (synthetic — see above)
+├── docs/                            Project reports (PDF)
+└── media/                           Launch footage and build photos
 ```
 
 ---
 
-## Key Skills Demonstrated
+## Skills
 
-- Embedded systems development
-- C++ / Arduino programming
-- ESP32 development
-- Sensor integration
-- Data acquisition
-- Flight-data logging
-- Experimental testing
-- Data analysis
-- SOLIDWORKS CAD
-- OpenRocket simulation
-- 3D-printable component design
-- Mechanical/electrical integration
-- Model rocket design and fabrication
+Embedded C++ · ESP32 · I²C sensor integration · onboard data logging · SOLIDWORKS ·
+3D printing · OpenRocket simulation · circuit prototyping and soldering · flight testing
 
 ---
 
-## Project Status
+## Status
 
-**Prototype Developed & Flight Tested**
-
-The rocket and onboard flight-computer system were developed and tested, with flight data successfully recorded for post-flight analysis.
+Airframe, avionics, and launch system built and flown. Next step is recovering a real
+logged flight and replacing the synthetic dataset with measured telemetry.
 
 ---
 
-## Author
+## Authors
 
-**Adriano Zagar**
-
-Engineering Portfolio Project
+Built as a two-person team project by **Adriano Zagar** and **Luke Schreiber**.

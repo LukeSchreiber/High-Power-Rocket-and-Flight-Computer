@@ -1,0 +1,11 @@
+# CAD, simulation, and media files are binary — never diff or line-ending convert them.
+*.SLDPRT binary
+*.STL    binary
+*.ork    binary
+*.xlsx   binary
+*.pdf    binary
+*.png    binary
+*.gif    binary
+
+# Arduino sources
+*.ino text eol=lf diff=cpp
