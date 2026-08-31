@@ -7,6 +7,9 @@ The project covers the full build: airframe design in OpenRocket, custom fins, n
 and launch-rail hardware modeled in SOLIDWORKS and 3D printed, firmware written in
 Arduino/C++, a homemade igniter and safety-interlock launch controller, and flight testing.
 
+**It flew, the log was recovered, and the measured apogee — 119.1 m (390.7 ft) — matched the
+pre-flight OpenRocket prediction to within 0.2%.**
+
 <img src="media/launch.gif" width="320" alt="Rocket launching from the field">
 
 ---
@@ -106,18 +109,53 @@ the airframe and predict the flight profile.
 | Peak velocity | 327 ft/s |
 | Peak acceleration | 317 ft/s² |
 
+[`simulation/synthetic_flight_log.xlsx`](simulation/synthetic_flight_log.xlsx) is a phase-labeled
+dataset generated from this simulation — not measured telemetry, and marked
+`Data_Source = SYNTHETIC_SIMULATION` in the file itself. The real flight log is
+[`data/flight_data.csv`](data/flight_data.csv) below.
+
 ---
 
-## Flight Data
+## Measured Flight Data
 
-[`data/flight_log.xlsx`](data/flight_log.xlsx) — a 200-row flight profile with per-phase
-labels (ignition, powered ascent, coast, apogee, descent, landed), matching the CSV schema
-the flight computer writes.
+[`data/flight_data.csv`](data/flight_data.csv) — **401 samples recovered from the flight
+computer's flash after the launch.** Twenty seconds of pressure, temperature, and derived
+altitude at a steady 20 Hz, exactly as the firmware wrote them.
 
-> **Note:** this workbook is **synthetic data generated from the OpenRocket simulation above**,
-> not telemetry recovered from a launch — it is labeled as such in the file itself
-> (`Data_Source = SYNTHETIC_SIMULATION`). It exists to demonstrate the logging format and
-> analysis pipeline. Recorded flight logs are not currently in this repository.
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="data/flight-profile-dark.svg">
+  <img src="data/flight-profile-light.svg" alt="Measured altitude vs. time: launch, apogee at 119.1 m after 3.2 s, parachute descent, touchdown at 19.2 s">
+</picture>
+
+| Measurement | Value |
+| --- | --- |
+| Apogee | **119.1 m (390.7 ft)** at t = 3.20 s |
+| Peak climb rate | 94 m/s (307 ft/s) at t ≈ 2.0 s |
+| Descent rate under parachute | 7.6 m/s (24.8 ft/s) |
+| Touchdown | t = 19.2 s |
+| Pressure swing | 1008.79 → 994.57 hPa |
+| Temperature | 24.80 °C on the pad → 24.32 °C at apogee |
+| Sensor noise on the ground | ±0.2 m |
+
+### Measured vs. predicted
+
+The OpenRocket model was built before the flight. Comparing it against what the rocket
+actually did is the real result here:
+
+| | Predicted | Measured | Difference |
+| --- | --- | --- | --- |
+| Apogee | 390 ft | 390.7 ft | +0.2% |
+| Time to apogee | 3.2 s | 3.20 s | — |
+| Total flight time | 19.3 s | 19.2 s | −0.5% |
+| Peak velocity | 327 ft/s | 307 ft/s | −6% |
+
+Apogee and timing matched the simulation to within a fraction of a percent. The velocity gap
+is expected: the flight computer carries no accelerometer, so climb rate is finite-differenced
+from barometric altitude, which lags during the ~2 s burn and smooths the true peak.
+
+The ±0.2 m spread in the pre-launch and post-landing samples is the practical altitude
+resolution of the BME280 at this configuration — small enough that a 119 m apogee is resolved
+to better than 0.2%.
 
 ---
 
@@ -150,8 +188,8 @@ cannot be energized by a single accidental press.
 ├── cad/
 │   ├── solidworks/                  Editable SOLIDWORKS parts
 │   └── stl/                         Print-ready meshes
-├── simulation/                      OpenRocket model + predicted flight profile
-├── data/                            Flight-log workbook (synthetic — see above)
+├── simulation/                      OpenRocket model, predicted profile, synthetic dataset
+├── data/                            Measured flight log (CSV) + rendered profile
 ├── docs/                            Project reports (PDF)
 └── media/                           Launch footage and build photos
 ```
@@ -160,15 +198,17 @@ cannot be energized by a single accidental press.
 
 ## Skills
 
-Embedded C++ · ESP32 · I²C sensor integration · onboard data logging · SOLIDWORKS ·
-3D printing · OpenRocket simulation · circuit prototyping and soldering · flight testing
+Embedded C++ · ESP32 · I²C sensor integration · onboard data logging · flight-data analysis ·
+simulation validation · SOLIDWORKS · 3D printing · OpenRocket · circuit prototyping and
+soldering · flight testing
 
 ---
 
 ## Status
 
-Airframe, avionics, and launch system built and flown. Next step is recovering a real
-logged flight and replacing the synthetic dataset with measured telemetry.
+**Complete and flight-validated.** The airframe, avionics, and launch system were built,
+flown, and recovered, and the onboard log was pulled from flash after the flight — the
+measured apogee matched the pre-flight simulation to within 0.2%.
 
 ---
 
