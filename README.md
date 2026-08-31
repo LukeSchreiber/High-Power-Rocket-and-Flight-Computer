@@ -68,7 +68,21 @@ Custom components were modeled in SOLIDWORKS and 3D printed. Sources are in
 | Launch-rail clamp | [RocketClamp.SLDPRT](cad/solidworks/RocketClamp.SLDPRT) | [RocketClamp.STL](cad/stl/RocketClamp.STL) |
 
 <img src="media/fin-motor-mount.png" width="300" alt="Printed fin can and motor mount">
-<img src="media/final-assembled-rocket.png" width="240" alt="Completed rocket">
+
+The finished airframe — 3D-printed fin can, nose cone, and painted body tube:
+
+<table>
+  <tr>
+    <td align="center">
+      <img src="media/final-assembled-rocket.png" width="240" alt="Adriano holding the completed rocket"><br>
+      <sub>Adriano with the completed rocket</sub>
+    </td>
+    <td align="center">
+      <img src="media/luke-with-rocket.jpg" width="240" alt="Luke holding the rocket beside the launch rod"><br>
+      <sub>Luke at the pad before launch</sub>
+    </td>
+  </tr>
+</table>
 
 Recovery is a parachute deployed by the motor's ejection charge.
 

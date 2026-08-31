@@ -5,6 +5,7 @@
 *.xlsx   binary
 *.pdf    binary
 *.png    binary
+*.jpg    binary
 *.gif    binary
 
 # Arduino sources
