@@ -1,88 +1,183 @@
-# Team-Developed Rocket and Flight Computer
+# Model Rocket Flight Computer & Airframe
 
-A custom rocket and embedded flight-computer system developed by **Adriano Zagar and team**. The project combines avionics, sensor integration, aerodynamic simulation, mechanical design, fabrication, recovery, and system-level testing.
+A custom model rocket and embedded flight-computer project integrating ESP32-based data acquisition, environmental sensing, onboard data logging, flight analysis, and custom-designed mechanical components.
 
-![Final assembled rocket](images/final-assembled-rocket.png)
+The project combines embedded C++ programming, electronics, sensor integration, CAD design, 3D printing, and experimental flight-data analysis into a complete rocket development platform.
+
+---
 
 ## Project Overview
 
-The goal of this project was to engineer and launch a complete rocket system with a custom ESP32-S3 flight computer. The rocket includes 3D-printed aerostructures, onboard altitude sensing and data logging, a parachute recovery system, and a key-locked ignition safety interlock.
+The goal of this project was to design and build a model rocket system capable of collecting and recording real flight data using a custom embedded flight computer.
 
-## Key Features
+The system uses an ESP32-based flight computer to interface with onboard sensors and record flight information for post-flight analysis. Custom mechanical components were designed for the rocket in SOLIDWORKS and exported as STL files for fabrication.
 
-- Custom ESP32-S3 flight computer
-- BME280 barometric pressure sensor for altitude tracking
-- Real-time flight-data logging to a microSD card
-- TPS61023 boost converter for stable power delivery
-- Aerodynamic modeling and stability validation in OpenRocket
-- Custom fins, nose cone, and motor mount designed in SOLIDWORKS
-- 3D-printed structural components
-- Parachute recovery system with validated canopy geometry
-- Custom ignition circuit with a key-locked safety interlock
-- Bench testing and iterative field testing
+The project demonstrates the complete engineering process from design and programming through fabrication, testing, and data analysis.
 
-## Tech Stack
+---
 
-| Area | Technologies and Components |
-| --- | --- |
-| Firmware | Embedded C++ |
-| Microcontroller | ESP32-S3 |
-| Sensor | BME280 barometric pressure sensor |
-| Data Storage | microSD card |
-| Power | TPS61023 boost converter |
-| Mechanical Design | SOLIDWORKS |
-| Flight Simulation | OpenRocket |
-| Fabrication | 3D printing and hand-soldered perfboard |
+## Repository Files
 
-## Development Process
+### Flight Computer Firmware
 
-1. **Design** – Modeled the custom aerostructures and mechanical components in SOLIDWORKS.
-2. **Simulate** – Evaluated rocket stability and predicted flight performance using OpenRocket.
-3. **Fabricate** – 3D printed and assembled the fins, nose cone, and motor mount.
-4. **Build Avionics** – Soldered the flight computer and developed the ESP32-S3 firmware.
-5. **Integrate** – Combined the electronics, sensors, structures, ignition controls, and recovery hardware.
-6. **Test** – Conducted bench tests and field launches to evaluate the integrated system.
+**[Flight_Computer_Program.ino](Flight_Computer_Program.ino)**
 
-## Flight Computer
+Arduino/ESP32 firmware used by the onboard flight computer for sensor interfacing, data acquisition, and flight-data logging.
 
-The flight computer is built around an ESP32-S3 and a hand-soldered perfboard assembly. A BME280 sensor records barometric pressure for altitude tracking, while flight data is written to a microSD card for analysis after recovery. A TPS61023 boost converter supports stable power delivery to the onboard electronics.
+---
 
-![ESP32-S3 flight computer](images/flight-computer.png)
+### Flight Data
 
-## Mechanical and Aerodynamic Design
+**[flight_log.xlsx](flight_log.xlsx)**
 
-The fins, nose cone, and motor mount were designed in SOLIDWORKS and fabricated using 3D printing. OpenRocket simulations were used to check aerodynamic stability and support design decisions before field testing.
+Recorded flight data used for post-flight analysis.
 
-| Fin and Motor Mount | OpenRocket Simulation | Launch Setup |
-| --- | --- | --- |
-| ![3D-printed fin and motor mount](images/fin-motor-mount.png) | ![OpenRocket flight simulation](images/openrocket-simulation.png) | ![Rocket launch setup](images/launch-setup.png) |
+**[RocketData.png](RocketData.png)**
 
-## Engineering Challenges
+Visualization of the collected rocket flight data.
 
-### System Integration
+![Rocket Flight Data](RocketData.png)
 
-The firmware, sensors, power system, recovery hardware, and mechanical structures had to operate as one flight-ready system. Bench testing was used to identify integration issues before field testing.
+---
 
-### Recovery System
+## Mechanical Design
 
-The team designed a parachute recovery system and evaluated the canopy geometry to support a controlled descent and safe recovery of the rocket and onboard electronics.
+Custom rocket components were designed in SOLIDWORKS and exported as STL files for fabrication and 3D printing.
 
-### Ignition Safety
+### Rocket Clamp
 
-The project incorporated a custom ignition circuit and a key-locked interlock to reduce the risk of unintended activation. Testing was performed under team supervision and appropriate launch-site safety procedures.
+- **[RocketClamp.SLDPRT](RocketClamp.SLDPRT)** — Original SOLIDWORKS part
+- **[RocketClamp.STL](RocketClamp.STL)** — 3D-printable version
 
-| Safety Interlock | Recovery Parachute | Ignition System |
-| --- | --- | --- |
-| ![Key-locked safety interlock](images/safety-lock.png) | ![Recovery parachute](images/recovery-parachute.png) | ![Custom ignition system](images/custom-igniter.png) |
+### Rocket Fins
+
+- **[RocketFins.SLDPRT](RocketFins.SLDPRT)** — Original SOLIDWORKS part
+- **[RocketFins.STL](RocketFins.STL)** — 3D-printable version
+
+### Nose Cone
+
+- **[cone.SLDPRT](cone.SLDPRT)** — Original SOLIDWORKS part
+- **[cone.STL](cone.STL)** — 3D-printable version
+
+---
+
+## OpenRocket Simulation
+
+**[RocketProject.ork](RocketProject.ork)**
+
+OpenRocket project file containing the rocket configuration used for design and flight simulation.
+
+---
+
+## Project Documentation
+
+### Engineering Project Report
+
+**[View Project PDF](rocket_project.pdf)**
+
+Additional project documentation is available here:
+
+**[View Additional Project PDF](rocket_project_2.pdf)**
+
+---
+
+## Project Images
+
+The repository also contains a collection of project images:
+
+**[Download Project Images](rocket-project-images.zip)**
+
+These images document the rocket, flight computer, CAD designs, development process, and testing.
+
+---
+
+## Engineering Workflow
+
+### 1. Rocket Design
+
+The rocket geometry and major components were developed and evaluated before fabrication.
+
+### 2. Mechanical CAD
+
+Custom components including the rocket fins, nose cone, and mounting hardware were modeled in SOLIDWORKS.
+
+### 3. Flight Computer Development
+
+An embedded flight computer was programmed to interface with onboard sensors and record flight information.
+
+### 4. Fabrication & Assembly
+
+Mechanical components were exported to STL format for fabrication and integrated with the rocket and flight-computer hardware.
+
+### 5. Flight Testing
+
+The completed system was tested through an actual rocket flight while the onboard electronics collected flight data.
+
+### 6. Data Analysis
+
+Recorded flight data was exported and analyzed after recovery to evaluate the rocket's flight behavior and the performance of the flight-computer system.
+
+---
 
 ## Repository Structure
 
 ```text
-.
-├── firmware/       # ESP32-S3 source code
-├── hardware/       # Schematics and wiring documentation
-├── cad/            # SOLIDWORKS and printable part files
-├── simulations/    # OpenRocket simulation files
-├── data/            # Example flight logs and analysis
-├── images/          # Project photos and diagrams
+Model-Rocket-Project/
+│
+├── Flight_Computer_Program.ino
+│
+├── RocketClamp.SLDPRT
+├── RocketClamp.STL
+│
+├── RocketFins.SLDPRT
+├── RocketFins.STL
+│
+├── cone.SLDPRT
+├── cone.STL
+│
+├── RocketProject.ork
+│
+├── flight_log.xlsx
+├── RocketData.png
+│
+├── rocket-project-images.zip
+│
+├── rocket_project.pdf
+├── rocket_project_2.pdf
+│
 └── README.md
+```
+
+---
+
+## Key Skills Demonstrated
+
+- Embedded systems development
+- C++ / Arduino programming
+- ESP32 development
+- Sensor integration
+- Data acquisition
+- Flight-data logging
+- Experimental testing
+- Data analysis
+- SOLIDWORKS CAD
+- OpenRocket simulation
+- 3D-printable component design
+- Mechanical/electrical integration
+- Model rocket design and fabrication
+
+---
+
+## Project Status
+
+**Prototype Developed & Flight Tested**
+
+The rocket and onboard flight-computer system were developed and tested, with flight data successfully recorded for post-flight analysis.
+
+---
+
+## Author
+
+**Adriano Zagar**
+
+Engineering Portfolio Project
